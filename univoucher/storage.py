@@ -117,7 +117,7 @@ class VoucherManager:
 
             created = data[0]["create_time"]
 
-            vresponse.content = list(filter(lambda voucher: voucher.note == note, self.get(created)))
+            vresponse.content = list(filter(lambda voucher: voucher.note == note, self.get(created).content))
         
         return vresponse
     

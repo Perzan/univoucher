@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, ArgumentTypeError
-from .storage import VoucherManager, Response
+from .storage import VoucherManager, Response, Voucher
 from getpass import getpass
 from json import dump
 from os import path
@@ -16,8 +16,40 @@ def vouchers_to_json(vouchers:list):
 def write_json(vouchers:list, output):
     dump(obj=vouchers_to_json(vouchers), fp=output, indent=4, sort_keys=True)
 
+def write_csv(vouchers:list, output):
+    import csv
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "identifier",
+        "site",
+        "admin",
+        "code",
+        "created",
+        "duration",
+        "hotspot",
+        "note",
+        "uses"
+    ]) # Write the column names
+
+    voucher:Voucher
+    for voucher in vouchers:
+        writer.writerow([
+            voucher.identifier,
+            voucher.site,
+            voucher.admin,
+            voucher.code,
+            voucher.created,
+            voucher.duration,
+            voucher.hotspot,
+            voucher.note,
+            voucher.uses
+        ])
+
 writers = {
-    "json": write_json
+    "json": write_json,
+    "csv": write_csv
 }
 
 def format_duration(duration:str) -> int:

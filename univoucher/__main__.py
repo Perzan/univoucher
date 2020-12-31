@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, ArgumentTypeError
-from .storage import VoucherManager, Response, dictify
+from .storage import VoucherManager, Response
 from getpass import getpass
 from json import dump, dumps
 from os import path
@@ -62,7 +62,7 @@ vman = VoucherManager(host=args.host, username=args.username, password=password,
 response:Response = vman.create(duration=args.duration, amount=args.amount, uses=args.uses)
 
 def json_vouchers():
-    return [dictify(voucher) for voucher in response.content]
+    return [voucher.dictify() for voucher in response.content]
 
 #####################################
 if args.output:

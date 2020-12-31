@@ -1,1 +1,1 @@
-from .storage import VoucherManager, Voucher, Response, dictify
+from .storage import VoucherManager, Voucher, Response

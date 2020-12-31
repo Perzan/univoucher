@@ -14,6 +14,19 @@ class Voucher:
     note:str
     uses:int
 
+    def dictify(self):
+        return {
+            "identifier":self.identifier,
+            "site":self.site,
+            "admin":self.admin,
+            "code":self.code,
+            "created":self.created,
+            "duration":self.duration,
+            "hotspot":self.hotspot,
+            "note":self.note,
+            "uses":self.uses
+        }
+
 def update(voucher:Voucher, json:dict):
     voucher.identifier = json.get("_id")
     voucher.site = json.get("site_id")
@@ -24,19 +37,6 @@ def update(voucher:Voucher, json:dict):
     voucher.hotspot = json.get("for_hotspot")
     voucher.note = json.get("note")
     voucher.uses = json.get("quota")
-
-def dictify(voucher:Voucher):
-    return {
-        "identifier":voucher.identifier,
-        "site":voucher.site,
-        "admin":voucher.admin,
-        "code":voucher.code,
-        "created":voucher.created,
-        "duration":voucher.duration,
-        "hotspot":voucher.hotspot,
-        "note":voucher.note,
-        "uses":voucher.uses
-    }
 
 class Response:
     status:int

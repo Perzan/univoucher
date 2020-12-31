@@ -104,7 +104,7 @@ if args.output:
         print(ERR_OUTPUT_IS_DIR["message"], file=sys.stderr)
         exit(ERR_OUTPUT_IS_DIR["code"])
     
-    with open(args.output, "w") as stream:
+    with open(args.output, "w", newline='') as stream:
         write(vouchers=response.content, output=stream)
 else:
     import sys

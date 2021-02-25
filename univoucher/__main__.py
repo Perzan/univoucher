@@ -76,7 +76,7 @@ parser.add_argument("--uses", type=uses, default=1)
 
 parser.add_argument("--username")
 
-parser.add_argument("--no-verify-ssl", action="store_true", default=True)
+parser.add_argument("--no-verify-ssl", action="store_true", default=False)
 
 parser.add_argument("--output")
 

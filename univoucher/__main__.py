@@ -80,7 +80,7 @@ parser.add_argument("--no-verify-ssl", action="store_true", default=False)
 
 parser.add_argument("--output")
 
-parser.add_argument("--type", type=str.lower, default="json", choices=writers.keys())
+parser.add_argument("--output-type", type=str.lower, default="json", choices=writers.keys())
 
 #####################################
 
@@ -102,7 +102,7 @@ vouchers = create(
     uses=args.uses
 )
 
-write:callable = writers.get(args.type)
+write:callable = writers.get(args.output_type)
 
 #####################################
 

@@ -10,11 +10,8 @@ ERR_OUTPUT_IS_DIR = {
     "message":"The specified output path is a directory"
 }
 
-def vouchers_to_json(vouchers:list):
-    return [vars(voucher) for voucher in vouchers]
-
 def write_json(vouchers:list, output):
-    dump(obj=vouchers_to_json(vouchers), fp=output, indent=4, sort_keys=True)
+    dump(obj=list(map(vars, vouchers)), fp=output, indent=4, sort_keys=True)
 
 def write_csv(vouchers:list, output):
     import csv

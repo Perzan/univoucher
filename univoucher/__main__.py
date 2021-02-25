@@ -1,9 +1,10 @@
-from argparse import ArgumentParser, ArgumentTypeError
+from argparse import ArgumentParser
 from .vouchers import Voucher, create
 from getpass import getpass
 from json import dump
 from os import path
-import sys
+from itertools import islice
+from typing import Callable
 import math
 
 ERR_OUTPUT_IS_DIR = {
@@ -53,28 +54,35 @@ writers = {
 def format_duration(duration:str) -> int:
     return int(duration) # TODO
 
+class FunctionChain:
+    function:Callable
+    __returned = []
+
+    def __init__(self, function:Callable):
+        self.function = function
+    
+    def __call__(self, *args, **kwargs):
+        self.__returned.append(self.function(*args, **kwargs))
+        return self
+    
+    def __iter__(self):
+        return islice(self.__returned, 0, len(self.__returned)-1)
+
 #####################################
 
 parser = ArgumentParser()
 
-parser.add_argument("host")
-
-parser.add_argument("--port", type=int, default=8443)
-
-parser.add_argument("--duration", type=format_duration, default="1000", help="duration in minutes")
-
-parser.add_argument("--amount", type=int, default=1)
-
-parser.add_argument("--uses", type=int, default=1)
-parser.add_argument("--unlimited", action="store_true", default=False)
-
-parser.add_argument("--username")
-
-parser.add_argument("--no-verify-ssl", action="store_true", default=False)
-
-parser.add_argument("--output")
-
-parser.add_argument("--output-type", type=str.lower, default="json", choices=writers.keys())
+FunctionChain(parser.add_argument) \
+    ("host") \
+    ("--port", type=int, default=8443) \
+    ("--duration", type=format_duration, default="1000", help="duration in minutes") \
+    ("--amount", type=int, default=1) \
+    ("--uses", type=int, default=1) \
+    ("--unlimited", action="store_true", default=False) \
+    ("--username") \
+    ("--no-verify-ssl", action="store_true", default=False) \
+    ("--output") \
+    ("--output-type", type=str.lower, default="json", choices=writers.keys())
 
 #####################################
 

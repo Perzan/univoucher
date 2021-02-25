@@ -8,6 +8,6 @@ distutils.core.setup(
     author_email="PerzanDevelopment@gmail.com",
     url="https://github.com/Perzan/univoucher",
     install_requires=[
-        "requests>=2.25,<3"
+        "requests>=2.25,<3.0"
     ]
 )

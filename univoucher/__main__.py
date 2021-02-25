@@ -72,7 +72,9 @@ parser.add_argument("--port", type=int, default=8443)
 parser.add_argument("--duration", type=format_duration, default="1000", help="duration in minutes")
 
 parser.add_argument("--amount", type=int, default=1)
+
 parser.add_argument("--uses", type=uses, default=1)
+parser.add_argument("--unlimited", action="store_true", default=False)
 
 parser.add_argument("--username")
 
@@ -99,7 +101,7 @@ vouchers = create(
     verify=not args.no_verify_ssl, 
     duration=args.duration, 
     amount=args.amount, 
-    uses=args.uses
+    uses=(math.inf if args.unlimited else args.uses)
 )
 
 write:callable = writers.get(args.output_type)

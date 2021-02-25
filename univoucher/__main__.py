@@ -53,14 +53,6 @@ writers = {
 def format_duration(duration:str) -> int:
     return int(duration) # TODO
 
-def uses(uses:str):
-    uses = uses.lower()
-
-    if uses in ("infinity", "inf", "unlimited"):
-        return math.inf
-    else:
-        return int(uses)
-
 #####################################
 
 parser = ArgumentParser()
@@ -73,7 +65,7 @@ parser.add_argument("--duration", type=format_duration, default="1000", help="du
 
 parser.add_argument("--amount", type=int, default=1)
 
-parser.add_argument("--uses", type=uses, default=1)
+parser.add_argument("--uses", type=int, default=1)
 parser.add_argument("--unlimited", action="store_true", default=False)
 
 parser.add_argument("--username")

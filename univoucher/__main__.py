@@ -53,16 +53,6 @@ writers = {
 def format_duration(duration:str) -> int:
     return int(duration) # TODO
 
-def str2bool(v):
-    if isinstance(v, bool):
-       return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise ArgumentTypeError('Boolean value expected.')
-
 def uses(uses:str):
     uses = uses.lower()
 
@@ -86,7 +76,7 @@ parser.add_argument("--uses", type=uses, default=1)
 
 parser.add_argument("--username")
 
-parser.add_argument("--verify-ssl", type=str2bool, default=True)
+parser.add_argument("--no-verify-ssl", action="store_true", default=True)
 
 parser.add_argument("--output")
 

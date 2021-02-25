@@ -69,7 +69,7 @@ parser.add_argument("host")
 
 parser.add_argument("--port", type=int, default=8443)
 
-parser.add_argument("--duration", type=format_duration, default="1000")
+parser.add_argument("--duration", type=format_duration, default="1000", help="duration in minutes")
 
 parser.add_argument("--amount", type=int, default=1)
 parser.add_argument("--uses", type=uses, default=1)

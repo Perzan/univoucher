@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, ArgumentTypeError
-from .storage import VoucherManager, Response, Voucher
+from .vouchers import VoucherManager, Response, Voucher
 from getpass import getpass
 from json import dump
 from os import path

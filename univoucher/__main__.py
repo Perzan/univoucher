@@ -11,7 +11,7 @@ ERR_OUTPUT_IS_DIR = {
 }
 
 def vouchers_to_json(vouchers:list):
-    return [voucher.dictify() for voucher in vouchers]
+    return [vars(voucher) for voucher in vouchers]
 
 def write_json(vouchers:list, output):
     dump(obj=vouchers_to_json(vouchers), fp=output, indent=4, sort_keys=True)

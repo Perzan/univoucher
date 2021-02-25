@@ -14,19 +14,6 @@ class Voucher:
     note:str
     uses:int
 
-    def dictify(self):
-        return {
-            "identifier":self.identifier,
-            "site":self.site,
-            "admin":self.admin,
-            "code":self.code,
-            "created":self.created,
-            "duration":self.duration,
-            "hotspot":self.hotspot,
-            "note":self.note,
-            "uses":self.uses
-        }
-
 def update(voucher:Voucher, json:dict):
     voucher.identifier = json.get("_id")
     voucher.site = json.get("site_id")

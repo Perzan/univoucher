@@ -1,8 +1,8 @@
-import distutils.core
+from setuptools import setup, find_packages
 
-distutils.core.setup(
+setup(
     name="univoucher",
-    packages=["univoucher"],
+    packages=find_packages(),
     version="1.0.2",
     author="Perzan",
     author_email="PerzanDevelopment@gmail.com",

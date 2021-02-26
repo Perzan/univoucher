@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
-from .vouchers import Voucher, create
+from .vouchers import create
+from .models import Voucher
 from getpass import getpass
 from json import dump
 from os import path

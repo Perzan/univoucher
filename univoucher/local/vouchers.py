@@ -1,12 +1,11 @@
 import requests
 from random import randint
-from urllib.parse import urlunparse as geturl, quote as urlquote
 from math import inf as infinity
-from .models import Voucher
+from .. import models
 
 MAX_NONCE = 99999999999999999999999999999999999999999999999
 
-def update(voucher, json:dict):
+def update(voucher:models.Voucher, json:dict):
     voucher.identifier = json.get("_id")
     voucher.site = json.get("site_id")
     voucher.admin = json.get("admin_name")
@@ -27,72 +26,103 @@ class CreateException(LocalException): ...
 class LoginException(LocalException): ...
 class RetrieveException(LocalException): ...
 
-def create(host:str, port:int, username:str, password:str, verify:bool, duration:int, amount:int, uses:int):
-    if uses == infinity: uses = 0
+class Client(models.Client):
+    netloc:str
+    username:str
+    password:str
+    verify:bool = True
+    ssl:bool = True
 
-    site:str="default"
+    _cookie = None
 
-    netloc = f"{urlquote(host, safe='')}:{int(port)}"
+    def __init__(self, netloc:str, username:str, password:str):
+        self.netloc = netloc
+        self.username = username
+        self.password = password
 
-    # 401 Not logged in
-    # 200 Logged in
-
-    payload = {
-        "username":username,
-        "password":password,
-        "for_hotspot":True,
-        "site_name":site
-    }
-
-    url = geturl(("https", netloc, "/api/login", "", "", ""))
-
-    response = requests.post(url=url, json=payload, verify=verify)
-
-    status = response.status_code
-
-    if status == 401: 
-        raise LoginException(response)
-
-    cookie = response.headers.get("Set-Cookie")
-    headers = {"Cookie":cookie}
-
-    note = str(randint(0, MAX_NONCE))
-
-    payload = {
-        "cmd":"create-voucher",
-        "expire":duration,
-        "n":amount,
-        "quota":uses,
-        "note":note
-    }
-    url = geturl(("https", netloc, f"/api/s/{site}/cmd/hotspot", "", "", ""))
-    response = requests.post(url=url, json=payload, headers=headers, verify=verify)
+    @property
+    def _headers(self):
+        if self._cookie is None:
+            return dict()
+        else:
+            return {"Cookie":self._cookie}
     
-    status = response.status_code
+    @property
+    def _scheme(self):
+        return "https" if self.ssl else "http"
 
-    if status != 200: 
-        raise CreateException(response)
-    
-    data = response.json().get("data")
+    @property
+    def _site(self):
+        return "default"
 
-    if not data: return None # ???
+    def _login(self):
+        url = f"{self._scheme}://{self.netloc}/api/self/sites"
 
-    time_created = data[0]["create_time"]
+        # 401 Not logged in
+        # 200 Logged in
 
-    url = geturl(("https", netloc, f"/api/s/{site}/stat/voucher", "", "", ""))
+        response = requests.get(url=url, headers=self._headers, verify=self.verify)
+        status=response.status_code
 
-    payload = {"create_time":time_created}
-    response = requests.get(url=url, json=payload, headers=headers, verify=verify)
-    
-    status=response.status_code
+        if status != 200:
+            payload = {
+                "username":self.username,
+                "password":self.password,
+                "for_hotspot":True,
+                "site_name":self._site
+            }
 
-    if status != 200: 
-        raise RetrieveException(response)
+            url = f"{self._scheme}://{self.netloc}/api/login"
 
-    all_vouchers_raw = response.json().get("data")
+            response = requests.post(url=url, json=payload, verify=self.verify)
+            status = response.status_code
+            
+            if status != 200: 
+                raise LoginException(response)
 
-    for raw_voucher in all_vouchers_raw:
-        voucher:Voucher = Voucher()
-        update(voucher, raw_voucher)
+            self._cookie = response.headers.get("Set-Cookie")
+
+    def __call__(self, duration:int, amount:int, uses:int):
+        self._login()
+
+        note = f"Univoucher.{str(randint(0, MAX_NONCE))}"
+
+        payload = {
+            "cmd":"create-voucher",
+            "expire":int(duration),
+            "n":int(amount),
+            "quota":(0 if uses == infinity else int(uses)),
+            "note":note
+        }
+
+        url = f"{self._scheme}://{self.netloc}/api/s/{self._site}/cmd/hotspot"
+        response = requests.post(url=url, json=payload, headers=self._headers, verify=self.verify)
+        status = response.status_code
+
+        if status != 200:
+            raise CreateException(response)
         
-        yield voucher
+        data = response.json().get("data")
+
+        if not data: return None # ???
+
+        time_created = data[0]["create_time"]
+
+        url = f"{self._scheme}://{self.netloc}/api/s/{self._site}/stat/voucher"
+
+        payload = {"create_time":time_created}
+        response = requests.get(url=url, json=payload, headers=self._headers, verify=self.verify)
+        
+        status=response.status_code
+
+        if status != 200: 
+            raise RetrieveException(response)
+
+        all_vouchers_raw = response.json().get("data")
+
+        for raw_voucher in all_vouchers_raw:
+            voucher:models.Voucher = models.Voucher()
+            update(voucher, raw_voucher)
+
+            if voucher.note == note:
+                yield voucher

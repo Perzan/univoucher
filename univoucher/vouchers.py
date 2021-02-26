@@ -2,6 +2,7 @@ import requests
 from random import randint
 from urllib.parse import urlunparse as geturl, quote as urlquote
 from math import inf as infinity
+from .models import Voucher
 
 MAX_NONCE = 99999999999999999999999999999999999999999999999
 
@@ -15,17 +16,6 @@ def update(voucher, json:dict):
     voucher.hotspot = json.get("for_hotspot")
     voucher.note = json.get("note")
     voucher.uses = json.get("quota")
-
-class Voucher:
-    identifier:str
-    site:str
-    admin:str
-    code:str
-    created:int
-    duration:int
-    hotspot:bool
-    note:str
-    uses:int
 
 class VoucherException(Exception):
     response:requests.Response

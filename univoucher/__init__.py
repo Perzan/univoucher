@@ -1,2 +1,2 @@
-from .vouchers import create, VoucherException, VoucherLoginException, VoucherCreationException, VoucherRetrievalException
+from .vouchers import create, CreateException, LoginException, RetrieveException
 from .models import Voucher

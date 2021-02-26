@@ -17,15 +17,15 @@ def update(voucher, json:dict):
     voucher.note = json.get("note")
     voucher.uses = json.get("quota")
 
-class VoucherException(Exception):
-    response:requests.Response
+class LocalException(Exception):
+    response:requests.models.Response
 
-    def __init__(self, response:requests.Response):
+    def __init__(self, response:requests.models.Response):
         self.response = response
 
-class VoucherLoginException(VoucherException): ...
-class VoucherCreationException(VoucherException): ...
-class VoucherRetrievalException(VoucherException): ...
+class CreateException(LocalException): ...
+class LoginException(LocalException): ...
+class RetrieveException(LocalException): ...
 
 def create(host:str, port:int, username:str, password:str, verify:bool, duration:int, amount:int, uses:int):
     if uses == infinity: uses = 0
@@ -51,7 +51,7 @@ def create(host:str, port:int, username:str, password:str, verify:bool, duration
     status = response.status_code
 
     if status == 401: 
-        raise VoucherLoginException(response)
+        raise LoginException(response)
 
     cookie = response.headers.get("Set-Cookie")
     headers = {"Cookie":cookie}
@@ -71,7 +71,7 @@ def create(host:str, port:int, username:str, password:str, verify:bool, duration
     status = response.status_code
 
     if status != 200: 
-        raise VoucherCreationException(response)
+        raise CreateException(response)
     
     data = response.json().get("data")
 
@@ -87,7 +87,7 @@ def create(host:str, port:int, username:str, password:str, verify:bool, duration
     status=response.status_code
 
     if status != 200: 
-        raise VoucherRetrievalException(response)
+        raise RetrieveException(response)
 
     all_vouchers_raw = response.json().get("data")
 

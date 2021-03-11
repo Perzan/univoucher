@@ -14,5 +14,5 @@ class Client:
     def __init__(self):
         raise NotImplementedError()
 
-    def create(self, amount:int, duration:int, uses:int) -> Iterable[Voucher]:
+    def fetch(self, amount:int, duration:int, uses:int) -> Iterable[Voucher]:
         raise NotImplementedError()

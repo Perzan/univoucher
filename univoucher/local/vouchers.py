@@ -82,7 +82,7 @@ class Client(models.Client):
 
             self._cookie = response.headers.get("Set-Cookie")
 
-    def create(self, amount:int, duration:int, uses:int):
+    def fetch(self, amount:int, duration:int, uses:int):
         self._login()
 
         note = f"Univoucher.{str(randint(0, MAX_NONCE))}"
